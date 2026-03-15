@@ -38,3 +38,7 @@
       - Kubernetes - Open-source container orchestration platform [Pods, Services, Deployments, Helm]
     - Containers - OS-level process isolation and packaging
       - Docker - Build, ship, and run containerized applications
+    - Distributed Computing - Frameworks for parallel workloads across clusters
+      - Ray - Python distributed computing framework for ML workloads
+    - Software Architecture - Design patterns for structuring applications
+      - Microservices Architecture - Decomposing applications into independent services
