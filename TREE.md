@@ -1,0 +1,27 @@
+# Knowledge Tree
+
+- Computer Science - Foundational computing concepts and theory
+  - Artificial Intelligence - Machine intelligence and learning systems
+    - Deep Learning - Neural networks with multiple layers
+      - Diffusion Models - Iterative denoising generative models
+      - Generative Adversarial Networks - Competing generator and discriminator networks
+    - Machine Learning Engineering - Practical ML implementation and coding
+      - PyTorch OA Common Questions - Typical online assessment coding patterns []
+  - Computer Graphics - Visual representation and image synthesis techniques
+    - 3D Geometry - Mathematical representation of 3D shapes
+      - Mesh Representations - Surface representation using vertices [Mesh Topology, Triangle Meshes, Polygon Meshes, Quad Meshes]
+      - Point Cloud Representations - Unstructured 3D points [Point Cloud Processing, Normals Estimation, Downsampling]
+      - Surface Representations - Mathematical 3D surfaces [Voxels, SDFs, Implicit Surfaces, Parametric Surfaces]
+    - 3D File Formats - Standard formats for storing 3D [FBX, GLTF, OBJ, PLY, STL, USD]
+    - 3D Generative Models - AI models that create 3D content
+      - 3D Diffusion Models - Diffusion models for 3D generation
+      - 3D GANs - Generative adversarial networks for 3D [EG3D, GET3D, Pi-GAN]
+      - Text to 3D Models - Generate 3D from text [DreamFusion, Point-E, Shap-E, Magic3D, Fantasia3D]
+    - 3D Graphics Applications - Real world uses of 3D [3D Printing, AR/VR, CAD, Game Development, Simulation]
+    - Differentiable Rendering - Gradient based rendering for optimization
+    - Neural Rendering - Neural networks for rendering tasks
+      - Multi-view Synthesis - Generating consistent views from angles
+      - NeRF - Neural radiance fields for view synthesis
+      - Volume Rendering - Rendering techniques for volumetric data
+    - Python - High level interpreted general purpose language
+      - Deep Learning Frameworks - Libraries for neural networks [PyTorch, TensorFlow, JAX]
