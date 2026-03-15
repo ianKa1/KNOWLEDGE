@@ -6,6 +6,10 @@
       - Diffusion Models - Iterative denoising generative models
       - Generative Adversarial Networks - Competing generator and discriminator networks
     - Machine Learning Engineering - Practical ML implementation and coding
+      - LLM Serving - Infrastructure for deploying large language models
+        - Distributed LLM Systems - Multi-node parallelism and deployment architectures
+        - Inference Optimization - Techniques to reduce latency and increase throughput
+          - vLLM - High-throughput inference engine using PagedAttention
       - PyTorch OA Common Questions - Typical online assessment coding patterns []
   - Computer Graphics - Visual representation and image synthesis techniques
     - 3D Geometry - Mathematical representation of 3D shapes
@@ -25,3 +29,12 @@
       - Volume Rendering - Rendering techniques for volumetric data
     - Python - High level interpreted general purpose language
       - Deep Learning Frameworks - Libraries for neural networks [PyTorch, TensorFlow, JAX]
+  - Hardware - Physical computing hardware and architecture
+    - GPU Computing - Parallel processing architecture for ML workloads
+      - CUDA Basics - NVIDIA parallel programming model and GPU execution
+      - GPU Memory Hierarchy - HBM, SRAM, bandwidth vs compute tradeoffs
+  - Systems - Infrastructure, distributed systems, and orchestration
+    - Container Orchestration - Managing containerized workloads at scale
+      - Kubernetes - Open-source container orchestration platform [Pods, Services, Deployments, Helm]
+    - Containers - OS-level process isolation and packaging
+      - Docker - Build, ship, and run containerized applications
