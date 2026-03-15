@@ -7,17 +7,24 @@ description: Adds content, notes, articles, concepts, or learning material to a 
 
 This skill organizes knowledge content into a hierarchical tree structure, creating nodes and directories as needed.
 
+## Two Modes of Input
+
+The user may provide either:
+
+- **Rich content** — an article, notes, a detailed explanation, or a file. Analyze what it's about and place it.
+- **Topic directions** — keywords, topic names, or hints like "kubernetes, vLLM, inference acceleration". These are not node names to copy verbatim; they are directions pointing at a knowledge area.
+
+**When the input is topic directions**, your job is to think about the logical structure of that knowledge area yourself. The user is telling you what they're interested in, not dictating the tree shape. Derive the right hierarchy from first principles: what are the natural parent categories? What sub-topics are mandatory to understand the area? How do the user's keywords relate to each other — are some subtopics of others? Only then propose a tree.
+
 ## How It Works
 
-When the user provides content (text, file, article, notes, concepts, etc.):
-
-1. **Reads the existing knowledge tree** from `TREE.md` in the project root
-2. **Analyzes the content** to understand what topic/subject it covers
-3. **Finds the appropriate location** in the tree based on semantic understanding
-4. **Creates missing parent nodes** if the content needs intermediate categories that don't exist yet
-5. **Creates directory structure** matching the tree hierarchy
-6. **Saves content** as markdown files in the appropriate subject directory
-7. **Updates TREE.md** with any new nodes added
+1. **Read the existing tree** from `TREE.md`
+2. **Analyze the input** to determine whether it's rich content or topic directions
+3. **Design the subtree** — for topic directions, reason about the logical structure independently before writing anything. Ask: what's the natural hierarchy here? Which of the user's terms are categories vs. specific tools vs. techniques? How do they nest?
+4. **Propose the subtree to the user** (see User-in-the-Loop section below) and wait for approval
+5. **Create directory structure** for approved nodes
+6. **Save content files** in the appropriate directories
+7. **Update TREE.md** with approved nodes
 
 ## Tree Structure
 
@@ -61,6 +68,53 @@ Directories mirror the tree structure. For example:
 
 Directory names use PascalCase or kebab-case and match the tree node names (spaces converted to hyphens).
 
+## User-in-the-Loop: Propose Before Acting
+
+Before creating any files or modifying `TREE.md`, always present your proposed subtree to the user and wait for their approval. This is mandatory — never skip ahead.
+
+Format the proposal in two parts: the requested nodes first, then any missing prerequisites separately so the user can easily prune what they already know.
+
+```
+Here's what I'd add for the requested topics:
+
+  [under Machine Learning Engineering]
+  - LLM Serving - Infrastructure for deploying large language models
+    - Distributed LLM Systems - Multi-node parallelism and deployment
+    - Inference Optimization - Techniques to reduce latency and increase throughput
+      - vLLM - High-throughput inference engine using PagedAttention
+
+  [new branch under Computer Science]
+  - Systems
+    - Container Orchestration
+      - Kubernetes - Open-source container orchestration platform
+
+These prerequisites are currently missing from the tree — I'd add them too
+for a smooth learning path:
+
+  [under Deep Learning]
+  - Transformer Architecture - Self-attention based sequence model
+    - Attention Mechanism - Scaled dot-product attention
+    - KV Cache - Key-value cache for autoregressive inference
+
+  [under Systems]
+  - Containers - OS-level process isolation and packaging
+    - Docker - Build, ship, and run containerized applications
+
+  [new branch under Computer Science]
+  - Hardware
+    - GPU Computing - Parallel processing for ML workloads
+      - GPU Memory Hierarchy - HBM, SRAM, bandwidth vs compute tradeoffs
+
+Prune anything you already know or don't want. I'll only create what you approve.
+```
+
+Then wait. The user may:
+- Approve as-is → proceed to file creation
+- Remove nodes → respect exactly what they prune
+- Ask to restructure → revise the proposal and show it again
+
+Do not proceed to Step 5 (creating directories) until the user explicitly approves.
+
 ## Workflow
 
 #### Step 1: Read the existing tree
@@ -73,30 +127,54 @@ First, read `TREE.md` from the project root to understand the current structure.
 - Computer Science
 ```
 
-#### Step 2: Analyze the new content
+#### Step 2: Analyze the input
 
-Understand what the content is about:
-- What's the main topic or concept?
-- What domain does it belong to (algorithms, systems, languages, etc.)?
-- Is it a broad overview or a specific subtopic?
-- What related topics already exist in the tree?
+If the input is **rich content**: understand what it's about — domain, specificity, related topics already in the tree.
 
-#### Step 3: Determine placement
+If the input is **topic directions**: reason about the logical structure of the knowledge area. Think about:
+- Which terms are broad categories vs. specific tools vs. techniques?
+- How do the terms relate — are some subtopics of others?
+- What intermediate nodes are logically mandatory even if the user didn't mention them?
+- Where in the existing tree does this area belong?
 
-Find where this content fits:
+**Example reasoning for "kubernetes, LLM distributed system, vLLM-omni, inference accelerator":**
+- "LLM distributed system" → broad deployment category → should be a parent node
+- "inference accelerator" → a category of techniques (quantization, speculative decoding, etc.) → child of a serving parent
+- "vLLM" → a specific tool that *implements* inference optimization → child of "inference acceleration", not a sibling
+- "kubernetes" → general infrastructure tool, not ML-specific → belongs in a separate "Systems" branch
 
-- **Exact match**: Does a node already exist for this exact topic? Use it.
-- **Subtopic**: Is this a more specific version of an existing topic? Create a child node.
-- **New branch**: Is this a new area not covered yet? Create new nodes.
+So the hierarchy would be: `LLM Serving → Inference Optimization → vLLM`, not three siblings.
 
-**Critical: Build the path level by level.** If the content is about "Quick Sort" but you don't have "Algorithms" → "Sorting" yet, create both parent nodes first:
-1. Add "Algorithms" under "Computer Science" (if missing)
-2. Add "Sorting" under "Algorithms" (if missing)
-3. Add "Quick Sort" under "Sorting"
+#### Step 3: Design the subtree
 
-#### Step 4: Update TREE.md
+Sketch the complete subtree before writing anything. Include nodes the user didn't explicitly mention but that are logically necessary as parents or groupings. Verify:
+- No orphan nodes (every new node has a logical parent)
+- Correct depth — tools/implementations are deeper than categories
+- Siblings are genuinely at the same level of abstraction
 
-Add the new node(s) to the tree at the appropriate location with short descriptions:
+**Also identify missing prerequisites.** For each new node being added, ask: "What does a learner need to understand *before* this?" Then check whether those prerequisite topics exist in the current tree. If they don't, add them to the proposal too.
+
+The goal is a smooth learning curve — someone should be able to navigate the tree from foundational concepts down to the new nodes without hitting unexplained jumps. If a prerequisite is already in the tree, just note the dependency (via Related Topics in the content file). If it's absent, propose it as an additional node.
+
+**Example:** Adding `vLLM` and `Kubernetes` without first having `Transformer Architecture` (needed to understand KV cache → PagedAttention) and `Containers / Docker` (needed to understand what Kubernetes orchestrates) creates a cliff. Propose those prerequisite nodes alongside the requested ones, clearly labeled so the user can prune what they already know.
+
+#### Step 4: Propose and get approval
+
+Present the proposed subtree to the user as shown in the User-in-the-Loop section. Wait for their response before continuing.
+
+#### Step 5: Create directory structure
+
+Once approved, create directories for all new nodes. Use the full path from root to leaf:
+
+```bash
+mkdir -p "Computer-Science/Algorithms/Sorting"
+```
+
+Directory names should match the tree node names with spaces replaced by hyphens.
+
+#### Step 6: Update TREE.md
+
+Add the approved nodes to the tree at the appropriate location:
 
 **Format**: `- Node Name - Short description (max 10 words)`
 
@@ -105,21 +183,10 @@ Add the new node(s) to the tree at the appropriate location with short descripti
 - Be specific and clear
 - Good: "Shortest path algorithm for weighted graphs"
 - Bad: "Important algorithm" (too vague)
-- Bad: "An essential technique used in many applications" (too wordy, focuses on why not what)
 
-Maintain proper indentation (2 spaces per level). Keep the tree alphabetically sorted within each level for easy navigation.
+Maintain proper indentation (2 spaces per level). Keep the tree alphabetically sorted within each level.
 
-#### Step 5: Create directory structure
-
-Create directories for any new nodes in the path. Use the full path from root to leaf:
-
-```bash
-mkdir -p "Computer-Science/Algorithms/Sorting"
-```
-
-Directory names should match the tree node names with spaces replaced by hyphens.
-
-#### Step 6: Save the content
+#### Step 7: Save the content
 
 Create a markdown file in the deepest (most specific) directory:
 
@@ -145,43 +212,52 @@ Create a markdown file in the deepest (most specific) directory:
 
 The "Related Topics" section helps create internal connections across the knowledge base.
 
-#### Step 7: Confirm with user
+#### Step 8: Confirm with user
 
 Show the user:
 - Where the content was placed in the tree
-- The file path created
-- Any new nodes added
+- The file paths created
 - Suggested related topics to cross-link
 
 ## Examples
 
-**Example 1: Adding content about Quick Sort**
+**Example 1: Rich content — an article about Quick Sort**
 
 Input: "Quick sort is a divide-and-conquer sorting algorithm..."
 
 Process:
-1. Read TREE.md
-2. Analyze: This is about a specific sorting algorithm
-3. Check tree: Need "Computer Science" → "Algorithms" → "Sorting" → "Quick Sort"
-4. Found: "Computer Science" exists, but "Algorithms" doesn't
-5. Add nodes: "Algorithms" (under CS), "Sorting" (under Algorithms), "Quick Sort" (under Sorting)
-6. Create: `Computer-Science/Algorithms/Sorting/`
+1. Read TREE.md — identify as rich content
+2. Analyze: specific sorting algorithm
+3. Design subtree: "Algorithms" → "Sorting" → "Quick Sort" (create missing parents)
+4. Propose to user: show the subtree, wait for approval
+5. Create: `Computer-Science/Algorithms/Sorting/`
+6. Update TREE.md
 7. Save: `Computer-Science/Algorithms/Sorting/quicksort.md`
-8. Update TREE.md with all new nodes
 
-**Example 2: Adding content to existing category**
+**Example 2: Topic directions — "kubernetes, LLM distributed system, vLLM, inference accelerator"**
 
-Input: "Merge sort is another efficient sorting algorithm..."
+Input: keywords, no detailed content
 
 Process:
-1. Read TREE.md (now has the Sorting node from Example 1)
-2. Analyze: Another sorting algorithm
-3. Check tree: "Sorting" node exists
-4. Add node: "Merge Sort" under existing "Sorting"
-5. Directory exists: `Computer-Science/Algorithms/Sorting/`
-6. Save: `Computer-Science/Algorithms/Sorting/mergesort.md`
-7. Update TREE.md with just "Merge Sort" node
-8. Suggest cross-link to quicksort.md in Related Topics
+1. Read TREE.md — identify as topic directions
+2. Reason about structure:
+   - "LLM distributed system" = broad deployment parent
+   - "inference accelerator" = category of optimization techniques (quantization, speculative decoding…) → child of serving
+   - "vLLM" = specific tool implementing inference optimization → child of "Inference Optimization", not a sibling to it
+   - "kubernetes" = general infra tool, not ML-specific → separate "Systems" branch
+3. Design subtree:
+   ```
+   Machine Learning Engineering
+     └── LLM Serving
+           ├── Distributed LLM Systems
+           └── Inference Optimization
+                 └── vLLM
+   Systems (new branch)
+     └── Container Orchestration
+           └── Kubernetes
+   ```
+4. Propose subtree to user, wait for approval/pruning
+5. After approval: create directories, update TREE.md, write content files
 
 ## Important Principles
 
