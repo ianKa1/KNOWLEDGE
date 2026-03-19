@@ -3,8 +3,10 @@
 - Computer Science - Foundational computing concepts and theory
   - Artificial Intelligence - Machine intelligence and learning systems
     - Deep Learning - Neural networks with multiple layers
-      - Diffusion Models - Iterative denoising generative models
-      - Generative Adversarial Networks - Competing generator and discriminator networks
+      - Generative Models - Models that learn data distributions to generate new samples [LEARNING_PATH](AI/Deep-Learning/Generative-Models/LEARNING_PATH.md)
+        - Diffusion Models - Iterative denoising generative models [LEARNING_PATH](AI/Deep-Learning/Generative-Models/Diffusion-Models/LEARNING_PATH.md)
+        - Generative Adversarial Networks - Competing generator and discriminator networks
+        - Variational Autoencoders - Probabilistic latent variable models [VAE, Beta-VAE, VQ-VAE] [LEARNING_PATH](AI/Deep-Learning/Generative-Models/Variational-Autoencoders/LEARNING_PATH.md)
     - Machine Learning Engineering - Practical ML implementation and coding
       - PyTorch OA Common Questions - Typical online assessment coding patterns []
   - Computer Graphics - Visual representation and image synthesis techniques
